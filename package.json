@@ -57,7 +57,7 @@
   },
   "scripts": {
     "start": "GRAPHQL_ENDPOINT=https://api.graph.cool/relay/v1/cixqegi9u003g0196b2rtnhqu node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "GRAPHQL_ENDPOINT=https://api.graph.cool/relay/v1/cixqegi9u003g0196b2rtnhqu node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "flow": "flow; test $? -eq 0 -o $? -eq 2"
   },
