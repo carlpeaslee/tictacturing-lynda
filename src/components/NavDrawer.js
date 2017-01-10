@@ -12,24 +12,25 @@ class NavDrawer extends Component {
     open: true
   }
 
-  handleToggle = () => this.setState({open: !this.state.open})
-
-  handleClose = () => this.setState({open: false})
+  toggle = () => {
+    this.setState( (prevState: {open: boolean}, props: object) => {
+      return {
+        open: !prevState.open
+      }
+    })
+  }
 
 
   render () {
     return (
       <div>
         <FloatingActionButton
-          onTouchTap={this.handleToggle}
+          onTouchTap={this.toggle}
         >
           <Menu />
         </FloatingActionButton>
         <Drawer
-          docked={false}
           open={this.state.open}
-          onRequestChange={(open) => this.setState({open})}
-          overlayStyle={{opacity:0}}
         >
           <div
             style={{
@@ -43,16 +44,18 @@ class NavDrawer extends Component {
           <Link
             to={'/'}
           >
-            <MenuItem>
-              Play
-            </MenuItem>
+            <MenuItem
+              onTouchTap={this.toggle}
+              primaryText='Play'
+            />
           </Link>
           <Link
             to={'/profile'}
           >
-            <MenuItem>
-              Profile
-            </MenuItem>
+            <MenuItem
+              onTouchTap={this.toggle}
+              primaryText={'Profile'}
+            />
           </Link>
 
 
