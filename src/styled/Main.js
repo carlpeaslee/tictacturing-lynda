@@ -7,6 +7,7 @@ const Container = styled.main`
   display: flex;
   margin: auto;
   flex-direction: column;
+  align-items: center;
   min-width: 800px;
   max-width: 80%;
   ${media.handheld`

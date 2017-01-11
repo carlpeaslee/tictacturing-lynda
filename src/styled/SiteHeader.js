@@ -7,6 +7,7 @@ const Container = styled.header`
   display: flex;
   flex-direction: row;
   justify-content: center;
+  margin-bottom: 10px;
 `
 
 const TextPart = styled.h1`
