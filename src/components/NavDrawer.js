@@ -3,7 +3,7 @@ import Drawer from 'material-ui/Drawer'
 import Divider from 'material-ui/Divider'
 import MenuLink from '../styled/MenuLink'
 import DrawerToggleButton from '../styled/DrawerToggleButton'
-import auth from '../utils/auth'
+import Authentication from '../containers/Authentication'
 
 class NavDrawer extends Component {
 
@@ -33,15 +33,7 @@ class NavDrawer extends Component {
           open={this.state.open}
           width={this.state.width}
         >
-          <div
-            style={{
-              height: '100px',
-              backgroundColor: 'salmon'
-            }}
-            onClick={auth.login}
-          >
-            Login Component
-          </div>
+          <Authentication/>
           <Divider/>
           <MenuLink
             to={'/'}
