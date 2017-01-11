@@ -8,8 +8,8 @@ const Container = styled.main`
   margin: auto;
   flex-direction: column;
   align-items: center;
-  min-width: 800px;
-  max-width: 80%;
+  width: 80%;
+  min-height: 80vh;
   ${media.handheld`
     width: 100%;
   `}

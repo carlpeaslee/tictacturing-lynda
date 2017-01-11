@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import TicTacToe from './TicTacToe'
+import Relay from 'react-relay'
 
 class Home extends Component {
 
@@ -10,4 +11,16 @@ class Home extends Component {
   }
 }
 
-export default Home
+export default Relay.createContainer(
+  Home, {
+    fragments: {
+      viewer: () => Relay.QL`
+        fragment on Viewer {
+          user {
+            id
+          }
+        }
+      `,
+    },
+  }
+)

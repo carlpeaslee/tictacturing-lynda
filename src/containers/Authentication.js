@@ -21,7 +21,7 @@ class Authentication extends Component {
       return (
         <RaisedButton
           label={'Login'}
-          onTouchTap={auth.login}
+          onTouchTap={auth.showLock}
           primary
           fullWidth={true}
 

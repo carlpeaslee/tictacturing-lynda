@@ -9,6 +9,7 @@ import {
   RelayNetworkLayer,
   urlMiddleware
 } from 'react-relay-network-layer'
+import {relayApi} from './config'
 
 const createHeaders = (idToken) => {
   if (idToken) {
@@ -23,7 +24,7 @@ const createHeaders = (idToken) => {
 Relay.injectNetworkLayer(
   new RelayNetworkLayer([
     urlMiddleware({
-      url: (req) => process.env.REACT_APP_GRAPHQL_URL,
+      url: (req) => relayApi,
     }),
     next => req => {
       let idToken = localStorage.getItem('idToken')

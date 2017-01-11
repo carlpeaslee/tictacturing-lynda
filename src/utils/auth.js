@@ -24,7 +24,7 @@ class AuthService {
 
     this.lock.on('authenticated', this._doAuthentication.bind(this))
 
-    this.login = this.login.bind(this)
+    this.showLock = this.showLock.bind(this)
 
   }
 
@@ -33,7 +33,7 @@ class AuthService {
     this.setExpiration(authResult.idTokenPayload.exp)
   }
 
-  login() {
+  showLock() {
     this.lock.show()
   }
 

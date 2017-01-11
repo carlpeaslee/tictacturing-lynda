@@ -10,7 +10,9 @@ class TicTacToe extends Component {
   }
 
   componentWillMount(){
-    let size = window.innerHeight * .8
+    let height = window.innerHeight
+    let width = window.innerWidth
+    let size = (height < width) ? height * .8 : width * .8
     let rows = this.state.rows
     let unit = size / rows
     let positions = []
@@ -19,11 +21,14 @@ class TicTacToe extends Component {
         positions.push([x*unit,y*unit])
       }
     }
+
+    let board = this.makeBoard(unit, size, rows)
     this.setState({
       size,
       rows,
       unit,
       positions,
+      board
     })
   }
 
@@ -44,7 +49,7 @@ class TicTacToe extends Component {
   }
 
 
-  squares = () => {
+  get squares () {
     let {
       unit,
       positions,
@@ -55,7 +60,6 @@ class TicTacToe extends Component {
       if (game[index] === 'X') {
         mark = 'X'
       }
-      console.log(mark)
       return (
         <Text
           key={index}
@@ -75,44 +79,48 @@ class TicTacToe extends Component {
     return marks
   }
 
+  makeBoard = (unit, size, rows) => {
+    let board = []
+    let stroke = 'grey'
+    let strokeWidth = 10
+    for (let i = 1; i < rows; i++) {
+      let position = unit * i
+      board.push(
+        <Line
+          points={[position, 0, position, size]}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          key={i + 'v'}
+        />
+      )
+      board.push(
+        <Line
+          points={[0, position, size, position]}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          key={i + 'h'}
+        />
+      )
+    }
+    return board
+  }
+
   render () {
     let {
-      unit,
-      size
+      size,
+      board
     } = this.state
-    let oneThird = unit * 1
-    let twoThirds = unit * 2
-    console.log(this.state)
     return (
       <Stage
         width={size}
         height={size}
       >
         <Layer>
-          <Line
-            points={[oneThird, 0, oneThird, size]}
-            stroke={'grey'}
-            strokeWidth={10}
-          />
-          <Line
-            points={[twoThirds, 0, twoThirds, size]}
-            stroke={'grey'}
-            strokeWidth={10}
-          />
-          <Line
-            points={[0, oneThird, size, oneThird]}
-            stroke={'grey'}
-            strokeWidth={10}
-          />
-          <Line
-            points={[0, twoThirds, size, twoThirds]}
-            stroke={'grey'}
-            strokeWidth={10}
-          />
+          {board}
         </Layer>
         <Layer>
 
-          {this.squares()}
+          {this.squares}
         </Layer>
       </Stage>
     )

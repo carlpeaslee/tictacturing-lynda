@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import styled from 'styled-components'
+import Relay from 'react-relay'
+
 
 const Container = styled.div`
   display: flex;
@@ -143,4 +145,16 @@ class Profile extends Component {
   }
 }
 
-export default Profile
+export default Relay.createContainer(
+  Profile, {
+    fragments: {
+      viewer: () => Relay.QL`
+        fragment on Viewer {
+          user {
+            id
+          }
+        }
+      `,
+    },
+  }
+)
