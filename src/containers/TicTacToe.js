@@ -66,7 +66,7 @@ class TicTacToe extends Component {
           width={unit}
           text={mark}
           fill={'Green'}
-          fontFamily={'Roboto'}
+          fontFamily={'Helvetica'}
           align={'center'}
           onClick={(event)=>{this.move(event)}}
         />
@@ -85,7 +85,8 @@ class TicTacToe extends Component {
     console.log(this.state)
     return (
       <Stage
-        width={size} height={size}
+        width={size}
+        height={size}
       >
         <Layer>
           <Line
