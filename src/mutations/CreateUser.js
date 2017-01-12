@@ -58,6 +58,7 @@ const CreateUser = (authFields) => {
           resolve(response)
         },
         onFailure: (response) => {
+          console.log('CreateUser error', response)
           reject(response)
         }
       }

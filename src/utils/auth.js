@@ -61,10 +61,7 @@ class AuthService {
           idToken,
           email,
           exp
-        }).then(
-          success => success,
-          error => console.log('CreateUser error')
-        )
+        }).then()
       }
     )
   }
