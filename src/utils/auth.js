@@ -1,17 +1,17 @@
 import Auth0Lock from 'auth0-lock'
 import {auth0Domain, auth0ClientId, url} from '../config'
 import {cyan500} from 'material-ui/styles/colors'
-
+import CreateUser from '../mutations/CreateUser'
+import SigninUser from '../mutations/SigninUser'
 
 class AuthService {
   constructor(clientId, domain) {
 
     this.lock = new Auth0Lock(clientId, domain, {
       auth: {
-        responseType: 'token',
-      },
-      params: {
-        scope: 'openid'
+        params: {
+          scope: 'openid email',
+        },
       },
       theme: {
         logo: `${url}/logo.png`,
@@ -22,35 +22,62 @@ class AuthService {
       },
     })
 
-    this.lock.on('authenticated', this._doAuthentication.bind(this))
-
     this.showLock = this.showLock.bind(this)
 
-  }
+    this.lock.on('authenticated', this.authProcess.bind(this))
 
-  _doAuthentication =  (authResult) => {
-    this.setToken(authResult.idToken)
-    this.setExpiration(authResult.idTokenPayload.exp)
+
   }
 
   showLock() {
     this.lock.show()
   }
 
-  setToken(idToken) {
+
+  setToken = (authFields) => {
+    let {
+      idToken,
+      exp
+    } = authFields
     localStorage.setItem('idToken', idToken)
+    localStorage.setItem('expiration', exp)
   }
 
-  setExpiration(expiration) {
-    localStorage.setItem('expiration', expiration)
+  authProcess = (authResult) => {
+    const {
+      exp,
+      email
+    } = authResult.idTokenPayload
+    const idToken = authResult.idToken
+
+    SigninUser({
+      idToken,
+      email,
+      exp
+    }).then(
+      success => success,
+      rejected => {
+        CreateUser({
+          idToken,
+          email,
+          exp
+        }).then(
+          success => success,
+          error => console.log('CreateUser error')
+        )
+      }
+    )
   }
+
 
   isCurrent() {
-    let now = Date.now()
-    let expiration = localStorage.getItem('expiration')
-    if (!expiration) {
+    let expString = localStorage.getItem('expiration')
+    if (!expString) {
       return false
-    } else if (expiration < now) {
+    }
+    let now = Date.now()
+    let exp = new Date(parseInt(expString, 10))
+    if (exp < now) {
       return false
     } else {
       return true
@@ -60,6 +87,7 @@ class AuthService {
   getToken() {
     return localStorage.getItem('idToken')
   }
+
 
   logout() {
     localStorage.removeItem('idToken')

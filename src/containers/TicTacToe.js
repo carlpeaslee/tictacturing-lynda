@@ -55,7 +55,7 @@ class TicTacToe extends Component {
       positions,
       game
     } = this.state
-    let marks = positions.map( (position, index) => {
+    return positions.map( (position, index) => {
       let mark = ''
       if (game[index] === 'X') {
         mark = 'X'
@@ -76,7 +76,6 @@ class TicTacToe extends Component {
         />
       )
     })
-    return marks
   }
 
   makeBoard = (unit, size, rows) => {
