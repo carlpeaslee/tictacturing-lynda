@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Layer, Line, Stage, Text, Group} from 'react-konva'
+import {Layer, Line, Stage, Text} from 'react-konva'
 import CreateGameMutation from '../mutations/CreateGameMutation'
 import Relay from 'react-relay'
 
@@ -21,14 +21,13 @@ class TicTacToe extends Component {
 
   state = {
     rows: 3,
-    size: 1000,
-    gameState: new Array(9),
+    gameState: new Array(9).fill(false),
     ownMark: 'X',
     otherMark: 'O',
     gameOver: false,
     yourTurn: true,
     winner: false,
-    guess: false
+    win: false
   }
 
   componentWillMount(){
@@ -60,12 +59,16 @@ class TicTacToe extends Component {
       let {
         gameState,
         yourTurn,
-        gameOver
+        gameOver,
+        winner
       } = prevState
+      yourTurn = !yourTurn
       gameState.splice(index, 1, mark)
       let foundWin = this.winChecker(gameState)
-      yourTurn = !yourTurn
-      if (foundWin || !gameState.includes(undefined) ) {
+      if (foundWin) {
+        winner = gameState[foundWin[0]]
+      }
+      if (foundWin || !gameState.includes(false) ) {
         gameOver = true
       }
       if (!yourTurn && !gameOver) {
@@ -75,7 +78,8 @@ class TicTacToe extends Component {
         gameState,
         yourTurn,
         gameOver,
-        win: foundWin || false
+        win: foundWin || false,
+        winner
       }
     })
   }
@@ -84,7 +88,7 @@ class TicTacToe extends Component {
     let combos = this.combos
     return combos.find( (combo) => {
       let [a,b,c] = combo
-      return (gameState[a] === gameState[b] && gameState[a] === gameState[c] && typeof gameState[a] !== 'undefined')
+      return (gameState[a] === gameState[b] && gameState[a] === gameState[c] && gameState[a])
     })
   }
 
@@ -93,25 +97,25 @@ class TicTacToe extends Component {
     let move = false
     let winOrLose = combos.find( (combo) => {
       let [a,b,c] = combo
-      if ((gameState[a] === gameState[b] && typeof gameState[c] === 'undefined')) {
+      if (gameState[a] === gameState[b] && !gameState[c] && gameState[a]) {
         move = c
-      } else if (gameState[a] === gameState[c] && typeof gameState[b]  === 'undefined') {
+      } else if (gameState[a] === gameState[c] && !gameState[b] && gameState[a]) {
         move = b
-      } else if (gameState[b] === gameState[c] && typeof gameState[a] === 'undefined') {
+      } else if (gameState[b] === gameState[c] && !gameState[a] && gameState[b] ) {
         move = a
       }
       return move
     })
-    if (winOrLose) {
-      return move
+    if (!winOrLose) {
+      let openSquares = []
+      gameState.forEach( (square, index) => {
+        if (!square) {
+          openSquares.push(index)
+        }
+      })
+      move = openSquares[this.random(0,open.length)]
     }
-    let open = []
-    gameState.forEach( (square, index) => {
-      if (typeof square === 'undefined') {
-        open.push(index)
-      }
-    })
-    return open[this.random(0,open.length)]
+    return move
   }
 
   random = (min, max) => {
@@ -149,8 +153,8 @@ class TicTacToe extends Component {
         fill = 'lightgreen'
       }
       let move = this.move
-      if (gameOver || !yourTurn) {
-        move = () => console.log('not your turn!')
+      if (gameOver || !yourTurn || mark) {
+        move = () => console.log('nope!')
       }
       return (
         <Text
@@ -199,65 +203,55 @@ class TicTacToe extends Component {
     return board
   }
 
-  recordGame = (resultObject) => {
-    if (this.props.self) {
-      let {
-        winner,
-        loser,
-        guess,
-        guessCorrect
-      } = resultObject
+  recordGame = (guess) => {
+    let {
+      self
+    } = this.props
+    let {
+      winner,
+      ownMark
+    } = this.state
+    if (self) {
+      let winnerId = (winner === ownMark) ? self.id : undefined
+      let guessCorrect = ('ROBOT') ? true : false
       this.props.relay.commitUpdate(
         new CreateGameMutation({
           user: this.props.self,
-          winner,
-          loser,
+          winnerId,
           guess,
           guessCorrect
         })
       )
     }
+    this.setState({
+      gameState: new Array(9).fill(false),
+      gameOver: false,
+      yourTurn: true,
+      winner: false,
+      win: false,
+    })
   }
 
 
 
   showMessages = () => {
-    let {
-      gameOver,
-      unit,
-      size
-    } = this.state
+    let gameOver = this.state.gameOver
     if (gameOver) {
       return (
-        <Group>
-          <Text
-            x={0}
-            y={unit/2}
-            fontSize={50}
-            fill={'green'}
-            text={'What do you think?'}
-            width={size}
-            align={'center'}
-          />
-          <Text
-            x={0}
-            y={size/2}
-            fontSize={50}
-            fill={'green'}
-            text={'Human?'}
-            align={'center'}
-            width={size/2}
-          />
-          <Text
-            x={size/2}
-            y={size/2}
-            fontSize={50}
-            fill={'green'}
-            text={'Robot?'}
-            align={'center'}
-            width={size/2}
-          />
-        </Group>
+        <div
+          style={{
+            backgroundColor: 'salmon',
+            position: 'absolute',
+            margin: 'auto',
+            top: '100px'
+          }}
+        >
+          <h3>What do you think?</h3>
+          <h4
+            onClick={()=>{this.recordGame('HUMAN')}}
+          >Human</h4>
+          <h4>Robot</h4>
+        </div>
       )
     }
   }
@@ -269,22 +263,23 @@ class TicTacToe extends Component {
       board
     } = this.state
     return (
-      <Stage
-        width={size}
-        height={size}
-      >
+      <div>
+        <Stage
+          width={size}
+          height={size}
+        >
 
-        <Layer>
-          {board}
-        </Layer>
-        <Layer>
+          <Layer>
+            {board}
+          </Layer>
+          <Layer>
 
-          {this.squares()}
-        </Layer>
-        <Layer>
-          {this.showMessages()}
-        </Layer>
-      </Stage>
+            {this.squares()}
+          </Layer>
+
+        </Stage>
+        {this.showMessages()}
+      </div>
     )
   }
 }

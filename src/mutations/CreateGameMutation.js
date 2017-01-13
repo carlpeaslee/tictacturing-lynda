@@ -29,7 +29,7 @@ export default class CreateGameMutation extends Relay.Mutation {
   getVariables () {
     return {
       player1Id: this.props.user.id,
-      winner: this.props.winner,
+      winnerId: this.props.winnerId,
       loser: this.props.loser,
       player1Guess: this.props.guess,
       player1GuessCorrect: this.props.guessCorrect
