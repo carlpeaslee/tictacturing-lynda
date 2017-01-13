@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import styled from 'styled-components'
 import Relay from 'react-relay'
-
+import {media} from '../utils/media'
 
 const Container = styled.div`
   display: flex;
@@ -10,6 +10,9 @@ const Container = styled.div`
   min-height: 100vh;
   flex-direction: column;
   align-items: center;
+  ${media.handheld`
+    width: 100%;
+  `}
 `
 
 const Name = styled.h2`
@@ -61,60 +64,40 @@ const Column = styled.span`
 
 class Profile extends Component {
 
-  static defaultProps = {
-    name: "USER'S_NAME",
-    records: [
-      {
-        opponent: 'ROBOT',
-        guess: 'ROBOT',
-        outcome: 'LOSS',
-        date: '12/25/2016',
-        id: '0001'
-      },
-      {
-        opponent: 'SARAH',
-        guess: 'ROBOT',
-        outcome: 'LOSS',
-        date: '12/26/2016',
-        id: '0002'
-      },
-      {
-        opponent: 'ROBOT',
-        guess: 'HUMAN',
-        outcome: 'WIN',
-        date: '12/27/2016',
-        id: '0003'
-      },
-    ]
-  }
-
   get records () {
-    return this.props.records.map(record=>(
-      <GameRecord
-        key={record.id}
-        id={record.id}
-      >
-        <Column>
-          {record.opponent}
-        </Column>
-        <Column>
-          {record.outcome}
-        </Column>
-        <Column>
-          {record.guess}
-        </Column>
-        <Column>
-          {record.date}
-        </Column>
-      </GameRecord>
-    ))
+    return this.props.viewer.user.p1games.edges.map((edge, index)=>{
+      let {
+        node
+      } = edge
+      return (
+        <GameRecord
+          key={node.id}
+          id={index}
+        >
+          <Column
+            noMobile={true}
+          >
+            'Robot'
+          </Column>
+          <Column>
+            {(node.winner) ? 'Won!' : "Didn't win"}
+          </Column>
+          <Column>
+            {node.player1GuessCorrect}
+          </Column>
+          <Column>
+            {new Date(node.createdAt).toLocaleDateString()}
+          </Column>
+        </GameRecord>
+      )
+    })
 
   }
 
   render () {
     let {
       name
-    } = this.props
+    } = this.props.viewer.user
     return (
       <Container>
         <Name>
@@ -125,7 +108,9 @@ class Profile extends Component {
             My Games
           </GameListHeader>
           <ColumnLabels>
-            <Column>
+            <Column
+              noMobile={true}
+            >
               Opponent
             </Column>
             <Column>
@@ -152,6 +137,21 @@ export default Relay.createContainer(
         fragment on Viewer {
           user {
             id
+            p1games (first: 10) {
+              edges {
+                node {
+                  id
+                  player2 {
+                    name
+                  }
+                  winner {
+                    id
+                  }
+                  createdAt
+                  player1GuessCorrect
+                }
+              }
+            }
           }
         }
       `,
