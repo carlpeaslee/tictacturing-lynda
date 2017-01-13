@@ -10,12 +10,13 @@ import Relay from 'react-relay'
 injectTapEventPlugin()
 
 class Template extends Component {
-
   render () {
     return (
       <MuiThemeProvider>
         <div>
-          <NavDrawer/>
+          <NavDrawer
+            user={this.props.viewer.user}
+          />
           <SiteHeader/>
           <Main>
             {this.props.children}

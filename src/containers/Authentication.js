@@ -4,17 +4,14 @@ import RaisedButton from 'material-ui/RaisedButton'
 
 class Authentication extends Component {
 
-  static defaultProps = {
-    authenticated: false,
-  }
-
   get checkAuthentication () {
-    if (this.props.authenticated) {
+    if (this.props.user) {
       return (
         <RaisedButton
           label={'Logout'}
           onTouchTap={auth.logout}
           fullWidth={true}
+          secondary
         />
       )
     } else {
@@ -24,7 +21,6 @@ class Authentication extends Component {
           onTouchTap={auth.showLock}
           primary
           fullWidth={true}
-
         />
       )
     }

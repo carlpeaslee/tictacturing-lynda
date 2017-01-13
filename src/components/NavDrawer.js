@@ -33,7 +33,9 @@ class NavDrawer extends Component {
           open={this.state.open}
           width={this.state.width}
         >
-          <Authentication/>
+          <Authentication
+            user={this.props.user}
+          />
           <Divider/>
           <MenuLink
             to={'/'}

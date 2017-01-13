@@ -4,9 +4,15 @@ import Relay from 'react-relay'
 
 class Home extends Component {
 
+
   render () {
     return (
-      <TicTacToe/>
+      <TicTacToe
+        self={this.props.viewer.user}
+        viewer={this.props.viewer}
+        gameId={'cixu6k67b14sr0179hvxspjjt'}
+        getGame={true}
+      />
     )
   }
 }
@@ -18,6 +24,7 @@ export default Relay.createContainer(
         fragment on Viewer {
           user {
             id
+            ${TicTacToe.getFragment('self')}
           }
         }
       `,
