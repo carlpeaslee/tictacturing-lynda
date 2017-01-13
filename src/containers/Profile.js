@@ -96,12 +96,12 @@ class Profile extends Component {
 
   render () {
     let {
-      name
+      email
     } = this.props.viewer.user
     return (
       <Container>
         <Name>
-          {name}
+          {email}
         </Name>
         <GameList>
           <GameListHeader>
@@ -136,7 +136,7 @@ export default Relay.createContainer(
       viewer: () => Relay.QL`
         fragment on Viewer {
           user {
-            id
+            email
             p1games (first: 10) {
               edges {
                 node {
